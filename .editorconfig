@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: © 2020 Matt Williams <matt@milliams.com>
+# SPDX-License-Identifier: CC0-1.0
+
+root = true
+
+[*.rst]
+indent_style = space
+indent_size = 3
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2

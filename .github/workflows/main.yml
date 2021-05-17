@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: © 2021 Matt Williams <matt@milliams.com>
+# SPDX-License-Identifier: MIT
+
+name: CI
+
+on: [push]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Check license
+        run: reuse lint
+      - name: Build docs
+        run: make dirhtml
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/master'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_build/dirhtml
