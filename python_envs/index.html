@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Python packages &#8212; Bristol RSE  documentation</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="prev" title="Bristol RSE" href="../" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../">
+  
+  
+  <h1 class="site-logo" id="site-title">Bristol RSE  documentation</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../search/" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <p class="caption collapsible-parent">
+ <span class="caption-text">
+  How-tos:
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Python packages
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/python_envs.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/BristolRSE/bristolrse.github.io"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        <a class="edit-button" href="https://github.com/BristolRSE/bristolrse.github.io/edit/master/python_envs.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#virtual-environments">
+   Virtual environments
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#creating-and-using-a-virtual-environment-on-bluepebble">
+     Creating and using a virtual environment on BluePebble
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#getting-python">
+       Getting Python
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#creating-a-virtual-environment">
+       Creating a virtual environment
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#installing-packages">
+       Installing packages
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#using-a-virtual-environment">
+       Using a virtual environment
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#deleting-a-virtual-environment">
+       Deleting a virtual environment
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#reproducibility">
+   Reproducibility
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <section id="python-packages">
+<h1>Python packages<a class="headerlink" href="#python-packages" title="Permalink to this headline">¶</a></h1>
+<p>When you do something like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">some_package</span>
+</pre></div>
+</div>
+<p>in a Python script, in the background Python goes away to try to find that package somewhere on your computer.
+If it’s a standard, built-in package like <code class="xref py py-mod docutils literal notranslate"><span class="pre">math</span></code> or <code class="xref py py-mod docutils literal notranslate"><span class="pre">sys</span></code> then it knows exactly where to look.</p>
+<p>For any third-party packages like <code class="xref py py-mod docutils literal notranslate"><span class="pre">pandas</span></code>, <code class="xref py py-mod docutils literal notranslate"><span class="pre">tensorflow</span></code> or <code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib</span></code>, it will look in a set number of known locations.
+This set of known locations is referred to as the “Python path”.
+They are usually located around wherever Python itself was installed.</p>
+<p>If you are on a shared computer, like the University’s HPC systems then the Python path will be pointing at a bunch of directories that you have no control over.
+If you want to have Python be able to find a new package, one option would be to ask the systems administrators to install it for you.</p>
+<p>The alternative option is to change the Python path.
+There are fiddly ways to do this that you might come across if you search online but these days the only method you should use is “virtual environments”.</p>
+<section id="virtual-environments">
+<h2>Virtual environments<a class="headerlink" href="#virtual-environments" title="Permalink to this headline">¶</a></h2>
+<p>A virtual environments is little more than a directory into which you can install any Python packages you want.
+They come with a little bit of automation which allows you to automatically have Python set the Python path correctly to make them available.</p>
+<p>This means that you can have a separate virtual environment for each different project you work on.
+If they require different packages, or even different version of the same package, you can do it without any clashes.</p>
+<section id="creating-and-using-a-virtual-environment-on-bluepebble">
+<h3>Creating and using a virtual environment on BluePebble<a class="headerlink" href="#creating-and-using-a-virtual-environment-on-bluepebble" title="Permalink to this headline">¶</a></h3>
+<p>The first step is to get a base version of Python to use.
+You could download this yourself (e.g. from python.org or use Miniconda) but BluePebble comes with versions of Python available.</p>
+<section id="getting-python">
+<h4>Getting Python<a class="headerlink" href="#getting-python" title="Permalink to this headline">¶</a></h4>
+<p>To search for all available Python modules, run:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>module spider python
+</pre></div>
+</div>
+<p>You’ll see a whole bunch under the <code class="docutils literal notranslate"><span class="pre">lang/python/anaconda</span></code> prefix.
+Chose one with a recent version of Python (the 3.x.y number) and without a suffix (like -AM, as they are special copies for certain groups).
+In my case I will use <code class="docutils literal notranslate"><span class="pre">lang/python/anaconda/3.8-2020.07</span></code>:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>module load lang/python/anaconda/3.8-2020.07
+</pre></div>
+</div>
+<p>Now if you do <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">--version</span></code>, you should get <code class="docutils literal notranslate"><span class="pre">Python</span> <span class="pre">3.8.3</span></code>.</p>
+</section>
+<section id="creating-a-virtual-environment">
+<h4>Creating a virtual environment<a class="headerlink" href="#creating-a-virtual-environment" title="Permalink to this headline">¶</a></h4>
+<p>Now that you’ve got the version of Python you want, you can create a virtual environment.
+This is managed by the built-in <a class="reference external" href="https://docs.python.org/3/library/venv.html">venv</a> module.
+There are other tools available which manage environments in a slightly different way (e.g. conda or poetry) but we won’t cover them here.</p>
+<p>When creating a virtual environment, you need to give the directory a name, in this case I will call it <code class="file docutils literal notranslate"><span class="pre">my_venv</span></code> but you can name it after the project you are working on if you like:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3 -m venv my_venv
+</pre></div>
+</div>
+<p>You should now see a directory called <code class="file docutils literal notranslate"><span class="pre">my_venv</span></code> in your current working directory.</p>
+<p>Inside that directory you will see a few subdirectories.
+Of note are the <code class="file docutils literal notranslate"><span class="pre">bin</span></code> directory which is where any tools you install into the virtual environment will go (if you peek in there now you’ll see there’s already a copy of <code class="docutils literal notranslate"><span class="pre">python</span></code> and <code class="docutils literal notranslate"><span class="pre">pip</span></code>) and the <code class="file docutils literal notranslate"><span class="pre">lib</span></code> directory which is where any modules you install will go (actually all the way under <code class="file docutils literal notranslate"><span class="pre">lib/python3.8/site-packages</span></code>).</p>
+<p>One of the first things to do with a new virtual environment is to make sure <code class="docutils literal notranslate"><span class="pre">pip</span></code> itself is up-to-date with:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>my_venv/bin/pip install --upgrade pip
+</pre></div>
+</div>
+<p>You’ll need to do this every time you create a new virtual environment.</p>
+</section>
+<section id="installing-packages">
+<h4>Installing packages<a class="headerlink" href="#installing-packages" title="Permalink to this headline">¶</a></h4>
+<p>You can now go ahead and install any packages you want into this virtual environment.
+You do this using the copy of <code class="docutils literal notranslate"><span class="pre">pip</span></code> in the environment.
+For example, if you wanted to install the package <code class="xref py py-mod docutils literal notranslate"><span class="pre">rich</span></code>, you would do:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>my_venv/bin/pip install rich
+</pre></div>
+</div>
+<p>For managing your required packages properly, see the section below on “Reproducibility”.</p>
+</section>
+<section id="using-a-virtual-environment">
+<h4>Using a virtual environment<a class="headerlink" href="#using-a-virtual-environment" title="Permalink to this headline">¶</a></h4>
+<p>If you want to run a script using the virtual environment you have made, you can specify the copy of Python within explicitly.
+So, instead of writing:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3 my_script.py
+</pre></div>
+</div>
+<p>you would write</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>~/my_venv/bin/python my_script.py
+</pre></div>
+</div>
+<p>This will work on the interactive terminal as well as in job scripts.</p>
+</section>
+<section id="deleting-a-virtual-environment">
+<h4>Deleting a virtual environment<a class="headerlink" href="#deleting-a-virtual-environment" title="Permalink to this headline">¶</a></h4>
+<p>You can delete a virtual environment by deleting the folder that was created at the beginning. In our case:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>rm -r my_venv
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="reproducibility">
+<h2>Reproducibility<a class="headerlink" href="#reproducibility" title="Permalink to this headline">¶</a></h2>
+<p>A benefit of using virtual environment is that it gives you control over exactly which packages, and at which version, you install.</p>
+<p>You should treat each virtual environment as ephemeral and feel able to destroy and recreate it at any time.
+If you make it easy for yourself to recreate the environment, it will be easy for other people to do the same and get a matching environment to you.</p>
+<p>The primary way to do this is to create a plain text file called <code class="file docutils literal notranslate"><span class="pre">requirements.txt</span></code> which lists all the packages you need, along with their versions.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>rich==10.2.0
+requests==2.25.1
+</pre></div>
+</div>
+<p>you can then use this file as an argument to <code class="docutils literal notranslate"><span class="pre">pip</span></code> to install all those packages:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>my_venv/bin/pip install -r requirements.txt
+</pre></div>
+</div>
+<p>and this will install the packages, at the required versions, into the virtual environment.</p>
+<p>Using a <code class="file docutils literal notranslate"><span class="pre">requirements.txt</span></code> file like this is the recommended way to manage your Python packages.</p>
+<p>You can find a lot more information about <code class="docutils literal notranslate"><span class="pre">pip</span></code> in <a class="reference external" href="https://pip.pypa.io/en/stable/">its documentation</a>.</p>
+</section>
+</section>
+
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="../" title="previous page">Bristol RSE</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+            &copy; Copyright 2021, Bristol RSE Team. CC-BY-SA 4.0.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
+
+
+    
+  </body>
+</html>
