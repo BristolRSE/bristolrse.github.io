@@ -10,7 +10,7 @@ This is a website to hold documentation and notes for the Research Software Engi
    :caption: How-tos:
    :titlesonly:
 
-   python_envs
+   how-tos/python_envs
 
 .. toctree::
    :caption: Tutorials:
