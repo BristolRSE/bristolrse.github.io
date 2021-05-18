@@ -4,6 +4,10 @@
 Python packages
 ###############
 
+.. admonition:: What is this page about?
+
+   How to install Python packages that your Python script needs
+
 When you do something like:
 
 .. code-block:: python
