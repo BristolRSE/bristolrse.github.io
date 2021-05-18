@@ -3,5 +3,6 @@
 
 sphinx~=4.0
 #myst-parser
-karma-sphinx-theme
+#karma-sphinx-theme
 sphinx-book-theme
+#pydata-sphinx-theme
