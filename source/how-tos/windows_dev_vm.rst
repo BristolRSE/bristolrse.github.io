@@ -1,4 +1,4 @@
-.. SPDX-FileCopyrightText: © 2020 Matt Williams <matt@milliams.com>
+.. SPDX-FileCopyrightText: © 2021 James C. Womack <J.C.Womack@bristol.ac.uk>
    SPDX-License-Identifier: CC-BY-SA-4.0
 
 Windows development VMs
@@ -9,7 +9,7 @@ Windows development VMs
    How to set up a Windows development virtual machine
 
 
-VM images are `available from Microsoft <https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/>`_ for use with VMWare, Hyper-V, VirtualBox, and Parallels are available and are ~20 GB in size. 
+Windows VM images are `available from Microsoft <https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/>`_ for use with VMWare, Hyper-V, VirtualBox, and Parallels are available and are ~20 GB in size. 
 
 The VM images expire after 60 days (the expiry date should be shown on the download page). The images are provided for evaluation and demonstration (see the terms linked on the download page) and do not require activation.
 
@@ -25,7 +25,7 @@ Download and initial setup
 --------------------------
 Download the Parallels virtual machine image `from Microsoft <https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/>`_.
 
-Check the file hash of the download against the image. The values under "FileHash" in the table of downloads `provided by Microsoft <https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/>`_ are SHA256 hash values, the default algorithm used by ``Get-FileHash`` in PowerShell. On MacOS we can check the hash using ``shasum``, e.g.
+Check the file hash of the download against the image. The values under "FileHash" in the table of downloads `provided by Microsoft <https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/>`_ are SHA256 hash values (the default algorithm used by ``Get-FileHash`` `in PowerShell <https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/get-filehash>`_). On MacOS we can check the hash using ``shasum``, e.g.
 
 .. code-block:: shell
    
@@ -39,7 +39,7 @@ Unzip the file into your Parallels virtual machine folder, e.g.
 
    unzip WinDev2104Eval.Parallels.zip -d ~/Parallels
 
-replacing ``~/Parallels`` with your Parallels virtual machine folder (this can be found in the Preferences menu for Parallels Desktop).
+replacing ``~/Parallels`` with your Parallels virtual machine folder (this can be found in the "Preferences" menu for Parallels Desktop).
 
 .. warning::
 
@@ -66,7 +66,7 @@ Sharing
 
 Parallels offers impressive integration between the host MacOS system and guest Windows VM, and this is activated by default. However, this is unnecessary (and potentially confusing) for a short-lived development VM image.
 
-Limit sharing to a single folder and disabling "Shared profile" (where MacOS and Windows both use some of the host machine's user folders). Select "Sharing" from the left of the "Options" tab of the VM configuration window and under "Share Mac"
+It is recommended to limit sharing to a single folder and disable "Shared profile" (where MacOS and Windows both use some of the host machine's user folders). Select "Sharing" from the left of the "Options" tab of the VM configuration window and under "Share Mac"
 
 * Change "Share folders" to "None"
 * Click "Custom folders..." and add your preferred shared folder from the host macOS system to the list of shared folders (e.g. ``~/Parallels Shared``)
@@ -78,7 +78,7 @@ Under  "Share Windows"
 
 * Uncheck "Access Windows folders from Mac"
 
-Disable sharing of Windows applications with MacOS (and MacOS applications with Windows). This disables the ability for the host and guest operating systems to open applications from each other. Select "Applications" from the right of the "Options" tab of the VM configuration window and
+Also recommended is disabling sharing of Windows applications with MacOS (and MacOS applications with Windows). This disables the ability for the host and guest operating systems to open applications from each other. Select "Applications" from the right of the "Options" tab of the VM configuration window and
 
 * Uncheck "Share Windows applications with Mac"
 * Uncheck "Show Windows notification area in Mac menu bar"
@@ -88,7 +88,7 @@ Disable sharing of Windows applications with MacOS (and MacOS applications with 
 Backup
 ^^^^^^
 
-The VM image is both large and will expire after 60 days. It is sensible to exclude this from Time Machine backups. To do this, open the Time Machine menu (from menu bar on MacOS 10.15 Catalina, Apple menu → "System Preferences..." → "Time Machine"), then select the "Options..." button in the Time Machine menu. Add the ``.pvm`` file for the Windows development VM to the list of excluded items. Parallels should inform you that the VM is not being backed up in the "Backup" tab of the VM configuration window.
+The VM image is both large and will expire after (at most) 60 days. It is sensible to exclude this from Time Machine backups. To do this, open the Time Machine menu (from menu bar on MacOS 10.15 Catalina, Apple menu → "System Preferences..." → "Time Machine"), then select the "Options..." button in the Time Machine menu. Add the ``.pvm`` file for the Windows development VM to the list of excluded items. Parallels should inform you that the VM is not being backed up in the "Backup" tab of the VM configuration window.
    
 Snapshots
 ^^^^^^^^^
@@ -103,4 +103,4 @@ License expiry
 
 The evaluation license for the VM expires on the date specified on the `download page <https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/>`_. The VM should present a warning message on startup when it is nearing expiry.
 
-A description of the VM, including the expiry date can be viewed when the VM is running by selecting the VM name from the MacOS menu bar and then selecting the "About" option (e.g. "WinDev2104Eval" → "About WinDev2104Eval").
+A description of the VM, including the expiry date, can be viewed when the VM is running by selecting the VM name from the MacOS menu bar and then selecting the "About" option (e.g. "WinDev2104Eval" → "About WinDev2104Eval").
