@@ -11,6 +11,7 @@ This is a website to hold documentation and notes for the Research Software Engi
    :titlesonly:
 
    how-tos/python_envs
+   how-tos/windows_dev_vm
 
 .. toctree::
    :caption: Tutorials:
