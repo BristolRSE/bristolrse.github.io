@@ -6,7 +6,7 @@ Windows development VMs
 
 .. admonition:: What is this page about?
 
-   How to set up a Windows development virtual machine
+   How to set up a Windows development virtual machine (on a MacOS host with Parallels hypervisor)
 
 
 Windows VM images are `available from Microsoft <https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/>`_ for use with VMWare, Hyper-V, VirtualBox, and Parallels are available and are ~20 GB in size. 
