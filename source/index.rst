@@ -12,6 +12,7 @@ This is a website to hold documentation and notes for the Research Software Engi
 
    how-tos/python_envs
    how-tos/windows_dev_vm
+   how-tos/parallel_R
 
 .. toctree::
    :caption: Tutorials:
