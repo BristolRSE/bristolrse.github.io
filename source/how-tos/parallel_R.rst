@@ -38,7 +38,10 @@ In particular, the how-to focuses on a small number of methods for running paral
 
 The ``parallel`` package employs a manager/worker approach to parallelism, in which a manager R process orchestrates a number of worker R processes.
 It provides a number of functions that, when called on the manager process, distribute computational work to worker processes.
-Notably ... [parallel analogues to lapply, sapply etc.]
+Notably the package offers parallel analogues of R's built-in functions for mapping functions to arrays, e.g. ``parLapply()`` and ``parSapply()`` (analogues of ``lapply()`` and ``sapply()``, respectively).
+
+The parallel mapping functions require a cluster object which specifies the pool of workers.
+A cluster object can be created using the ``makeCluster()`` function.
 
 pbdMPI
 ======
