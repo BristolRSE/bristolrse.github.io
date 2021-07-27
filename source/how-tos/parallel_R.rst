@@ -19,10 +19,26 @@ This how-to article is concerned with **running R in parallel on high-performanc
 In particular, the how-to focuses on a small number of methods for running parallel R that have been tested on the `University of Bristol ACRC's HPC facilities <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_.  
 
 
-parallel + snow
-===============
+``parallel`` + ``snow``
+=======================
+``parallel`` is part of base R and supports multiprocess parallelism out-of-the-box.
+``parallel`` does not come with MPI support, but supports this using the ``snow`` package, which is available via `CRAN <https://cran.r-project.org/package=snow>`_, e.g.
 
+.. code-block:: R
 
+   install.packages("snow")
+
+.. note::
+
+   The functionality of ``parallel`` and ``snow`` overlap significantly because ``parallel`` includes revised parts of ``snow``. 
+   The packages share a number of function names, so we must be explicit about which package we are using when both are loaded using ``::``, e.g. ``parallel::parSapply()``.
+   
+   In this example we use ``snow`` only where necessary for MPI parallelism, and use ``parallel`` otherwise.
+   This allows the example code to be repurposed for non-MPI parallelism using ``parallel`` alone.  
+
+The ``parallel`` package employs a manager/worker approach to parallelism, in which a manager R process orchestrates a number of worker R processes.
+It provides a number of functions that, when called on the manager process, distribute computational work to worker processes.
+Notably ... [parallel analogues to lapply, sapply etc.]
 
 pbdMPI
 ======
