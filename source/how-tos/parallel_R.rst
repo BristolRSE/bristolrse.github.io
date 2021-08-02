@@ -42,7 +42,88 @@ Notably the package offers parallel analogues of R's built-in functions for mapp
 
 The parallel mapping functions require a cluster object which specifies the pool of workers.
 A cluster object can be created using the ``makeCluster()`` function.
+On systems where process spawning is supported, MPI clusters can be created in R, for example
 
+.. code-block:: R
+
+   cl <- parallel::makeCluster(spec=4, type="MPI")
+
+which creates 4 worker MPI processes (in addition to the running manager process).
+Behind-the-scenes, ``parallel`` uses ``snow`` to create the MPI cluster.
+
+During testing on ACRC's HPC facilities, spawning MPI processes using ``makeCluster`` was found to cause problems, particularly when submitting jobs to run across multiple compute nodes.
+The recommended approach for creating an MPI cluster using ``parallel`` + ``snow`` on ACRC HPC facilities is to create the cluster prior to starting R using ``mpirun`` to run the ``RMPISNOW`` script distributed with the ``snow`` package (see `"MPI Clusters without Spawning" <http://www.stat.uiowa.edu/~luke/R/cluster/cluster.html>`_), e.g. in the job submission script
+
+.. code-block:: shell
+
+   mpirun -np 5 RMPISNOW [...]
+
+which will create a manager MPI process and 4 worker MPI processes represented by a cluster object.The arguments following ``RMPISNOW`` (``[...]``) will be passed to the manager R process.
+
+.. note:: 
+
+   ``RMPISNOW`` is a shell script distributed with the ``snow`` R package.
+   It is used to start a cluster of MPI processes (manager + workers) prior to running R code  using MPI parallelism via ``snow``.
+
+   If ``RMPISNOW`` is not available on the system ``PATH``, it can be located in the R library tree in which ``snow`` is installed at the path ``<R library tree>/snow/RMPISNOW`` (your ``<R library tree>`` can be found by running ``.libPaths()`` in a R session). 
+
+   ``RMPISNOW`` invokes R with the ``R`` command, rather than ``Rscript``.
+   Command line arguments to ``RMPISNOW`` are forwarded to ``R``. 
+   For non-interactive job submission scripts, it is useful to run ``R`` in batch mode e.g.
+
+   .. code-block:: shell
+
+      mpirun -np 5 RMPISNOW CMD BATCH --no-save --no-echo input.R output.Rout
+
+   where ``--no-save`` and ``--no-echo`` tell R to not save the workspace at the end of the session and to suppress output of input commands, respectively.
+
+To obtain the MPI cluster object created by ``RMPISNOW``, use ``snow::getMPIcluster``, rather than ``parallel::makeCluster``, e.g.
+
+.. code-block:: R
+
+   cl <- snow::getMPIcluster()
+
+Once the cluster object has been created, this can be passed to the various functions provided by the ``parallel`` package for running parallel computations.
+When the cluster is no longer required (usually at the end of the script), ``parallel::stopCluster`` should be used to shut down the cluster and ensure that worker processes are stopped, e.g.
+
+.. code-block:: R
+
+   stopCluster(cl)
+
+Here is a short example R script that runs a maps a "Hello world" function to an array of integers,  distributes calls across worker processes, then outputs all results on the manager process:
+
+.. code-block:: R
+
+   library(Rmpi)
+   library(snow)
+   library(parallel)
+
+   cl <- snow::getMPIcluster()
+
+   parallel::clusterExport(cl, c("MPI_COMM_WORLD"))
+
+   fn <- function(n, comm = MPI_COMM_WORLD) { 
+     info <- Sys.info()
+     rank <- mpi.comm.rank(comm)
+     return(sprintf("Hello world! Node %s (rank %s) received value %d", info["nodename"], rank,  n))
+   }
+
+   values <- seq(1, 100)
+
+   results <- parallel::parSapply(cl, values, fn)
+
+   for(s in results) {
+     print(s)
+   }
+
+   parallel::stopCluster(cl)  
+
+Note that this example imports the ``Rmpi`` package, though it is not necessary in general to use ``parallel`` + ``snow`` for MPI parallelism.
+``Rmpi`` provides low-level MPI wrapper functions used by ``snow`` and in this case, it is only used to obtain the rank of the MPI process running the "Hello world" function using ``mpi.comm.rank``.
+The ``parallel::clusterExport`` function is used to broadcast variable values from the manager process to the worker processes, in this case exporting the handle for the default MPI communicator, ``MPI_COMM_WORLD``.
+
+A submission script to run this ... 
+   
 pbdMPI
 ======
 
