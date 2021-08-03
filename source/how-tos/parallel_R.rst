@@ -118,11 +118,41 @@ Here is a short example R script that runs a maps a "Hello world" function to an
 
    parallel::stopCluster(cl)  
 
-Note that this example imports the ``Rmpi`` package, though it is not necessary in general to use ``parallel`` + ``snow`` for MPI parallelism.
-``Rmpi`` provides low-level MPI wrapper functions used by ``snow`` and in this case, it is only used to obtain the rank of the MPI process running the "Hello world" function using ``mpi.comm.rank``.
-The ``parallel::clusterExport`` function is used to broadcast variable values from the manager process to the worker processes, in this case exporting the handle for the default MPI communicator, ``MPI_COMM_WORLD``.
+.. note:: 
+   This example imports the ``Rmpi`` package, though it is not necessary in general to use ``parallel`` + ``snow`` for MPI parallelism.
+   ``Rmpi`` provides low-level MPI wrapper functions used by ``snow`` and in this case, it is only used to obtain the rank of the MPI process running the "Hello world" function using ``mpi.comm.rank``.
+   The ``parallel::clusterExport`` function is used to broadcast variable values from the manager process to the worker processes, in this case exporting the handle for the default MPI communicator, ``MPI_COMM_WORLD``.
 
-A submission script to run this ... 
+Here is an example of a submission script that could be used to submit the abobve to a PBS-type scheduler (e.g. `OpenPBS <https://www.openpbs.org/>`_, `TORQUE <https://adaptivecomputing.com/cherry-services/torque-resource-manager/>`_) with non-process-spawning MPI:
+
+.. code-block:: shell
+
+   #!/bin/bash
+
+   #PBS -N hello_mpi
+   #PBS -l select=2:ncpus=4:mpiprocs=4:ompthreads=1:mem=500M
+   #PBS -l walltime=00:01:00
+
+   module load lib/openmpi/4.0.2-gcc
+   module load lang/r/4.0.2-gcc
+
+   R_LIBRARY_PATH="/sw/lang/R-4.0.2-gcc/lib64/R/library"
+   RMPISNOW_SH="${R_LIBRARY_PATH}/snow/RMPISNOW"
+
+   R_SCRIPT_PATH="${PBS_O_WORKDIR}/hello_mpi.R"
+   R_OUTPUT_PATH="${PBS_O_WORKDIR}/hello_mpi.Rout"
+
+   mpirun -np 8 ${RMPISNOW_SH} CMD BATCH --no-save --no-echo ${R_SCRIPT_PATH} ${R_OUTPUT_PATH}
+
+The script requests a walltime of 1 minute and 2 resource "chunks" with 4 cores, 4 MPI processes, and 500 MB memory each (resource chunks may or may not run on different physical nodes, depending on how the cluster is configured).
+The R script ``hello_mpi.R`` is run in batch mode with 1 manager process and 7 worker processes (8 total MPI processes) created by ``RMPISNOW``. 
+The result is output in ``hello_mpi.Rout``.
+
+.. note::
+   The environment modules (``lib/openmpi/4.0.2-gcc`` and ``lang/r/4.0.2-gcc``) and ``R_LIBRARY_PATH`` value are specific to the `Blue Pebble cluster <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_ at University of Bristol.
+   These will need to be modified for other clusters.
+   Similarly, the script will need modification to use on clusters using non-PBS-type schedulers, such as `SLURM <https://slurm.schedmd.com/documentation.html>`_.
+
    
 pbdMPI
 ======
