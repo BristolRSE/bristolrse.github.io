@@ -21,6 +21,7 @@ The CRAN Task View `High-Performance and Parallel Computing with R <https://cran
 This how-to article is concerned with **running R in parallel on high-performance computing (HPC) clusters**, in which a `job scheduler <https://en.wikipedia.org/wiki/Job_scheduler>`_ distributes user-submitted jobs to compute nodes and `MPI <https://en.wikipedia.org/wiki/Message_Passing_Interface>`_ is used for communication in multi-node parallel jobs.
 In particular, the how-to focuses on a small number of methods for running parallel R that have been tested on the `University of Bristol ACRC's HPC facilities <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_.  
 
+.. _parallel-R-parallel-snow:
 
 parallel + snow
 =======================
@@ -159,6 +160,39 @@ The result is output in ``hello_mpi.Rout``.
    
 pbdMPI
 ======
+The ``pbdMPI`` package is part of the `Programming with Big Data in R (pdbR) project <https://pbdr.org/>`_, a set of R packages designed for use in distributed computing and data science.
+The package is available via `CRAN <https://cran.r-project.org/package=pbdMPI>`_, e.g.
+
+.. code-block:: R
+
+   install.packages("pbdMPI")
+
+``pbdMPI`` is a low-level MPI wrapper, allowing R code to perform typical MPI operations like broadcasting, gathering, and reducing data distributed across MPI processes.
+If you have written code using MPI in other languages (e.g. Fortran, C), then ``pbdMPI``'s API should be familiar to you.
+
+Unlike :ref:`parallel-R-parallel-snow`, ``pbdMPI`` has no concept of manager and worker MPI processes.
+Instead, ``pbdMPI`` uses a Single Program Multiple Data (SPMD) model, in which each MPI process runs an identical program, but works with different data (i.e. all processes are workers).
+This is a common approach in parallel HPC software, and enables the development software in whch parallel processes co-operate and exchange data as needed.
+
+.. note::
+   ``pbdMPI`` is designed for use in non-interactive (batch) mode, and should not be used within an interactive R session.
+   Instead, run a R script using ``mpirun``, e.g.
+
+   .. code-block:: shell
+
+      mpirun -np 8 Rscript input.R > output.Rout
+
+   Since all MPI processes are workers, R scripts using ``pbdMPI`` do not need to be started using a script like ``RMPISNOW`` (see :ref:`parallel-R-parallel-snow`) and can be run directly using ``mpirun``.
+   However, in testing it was found that using ``R CMD BATCH`` caused problems with text output, so it is 
+   recommended to use ``Rscript`` to invoke R.
+
+
+
+.. note::
+   ``pbdMPI`` is well-documented!
+   If you are interested learning more about using the package, see the detailed `vignette <https://cran.r-project.org/web/packages/pbdMPI/vignettes/pbdMPI-guide.pdf>`_ (``vignette("pbdMPI-guide")``).
+   This includes examples which compare scripts using ``parallel`` + ``snow`` to equivalent scripts using ``pbdMPI``.
+   The package is also distributed with a number of demos (described in the vignette) and the source code for the demos can be viewed on `GitHub <https://github.com/RBigData/pbdMPI/tree/master/demo>`_.
 
 
 foreach + doMPI
