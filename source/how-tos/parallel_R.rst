@@ -94,7 +94,7 @@ When the cluster is no longer required (usually at the end of the script), ``par
 
    stopCluster(cl)
 
-Here is a short example R script that runs a maps a "Hello world" function to an array of integers,  distributes calls across worker processes, then outputs all results on the manager process:
+Here is a short example R script that maps a "Hello world" function to an array of integers,  distributes calls across worker processes, then outputs all results on the manager process:
 
 .. code-block:: R
 
@@ -172,7 +172,7 @@ If you have written code using MPI in other languages (e.g. Fortran, C), then ``
 
 Unlike :ref:`parallel-R-parallel-snow`, ``pbdMPI`` has no concept of manager and worker MPI processes.
 Instead, ``pbdMPI`` uses a Single Program Multiple Data (SPMD) model, in which each MPI process runs an identical program, but works with different data (i.e. all processes are workers).
-This is a common approach in parallel HPC software, and enables the development software in whch parallel processes co-operate and exchange data as needed.
+This is a common approach in parallel HPC software, and enables the development of software in which parallel processes co-operatively exchange data as needed.
 
 .. note::
    ``pbdMPI`` is designed for use in non-interactive (batch) mode, and should not be used within an interactive R session.
@@ -186,7 +186,55 @@ This is a common approach in parallel HPC software, and enables the development 
    However, in testing it was found that using ``R CMD BATCH`` caused problems with text output, so it is 
    recommended to use ``Rscript`` to invoke R.
 
+R scripts using ``pbdMPI`` must start by initialising MPI using ``pbdMPI::init()`` and end by finalising MPI using ``pbdMPI::finalize()``.
+Between these two function calls, worker processes can perform computations, communicate data, and perform collective MPI operations (e.g. reduction).
+Each MPI process has a integer "rank" which can be obtained by calling ``comm.rank()``.
+The rank of the process is typically used to control the behaviour of the process, for example by selecting a rank of input data to work on. 
 
+Here is a short example R script that maps calls of a "Hello world" function (similar to the function used in :ref:`parallel-R-parallel-snow`) to data from an array of integers.
+On each MPI process, the function is called on a chunk of data selected based on the process's rank.   
+
+.. code-block:: R
+
+   library(pbdMPI)
+
+   fn <- function(n) { 
+   info <- Sys.info()
+   rank <- comm.rank()
+   return(sprintf("Hello world! Node %s (rank %s) received value %d",
+            info["nodename"], rank,  n))
+   }
+
+   init()
+
+   values <- seq(0, 100)
+
+   # Break data into chunks based on MPI rank 
+   # (highest numbered rank gets any remainder)
+   chunk_size <- length(values) %/% comm.size() # %/% is integer division
+   if (comm.rank() < comm.size() - 1) {
+     start <- comm.rank() * chunk_size + 1  # + 1 since R uses 1-based indexing
+     end <- start + chunk_size - 1
+   } else {
+     start <- comm.rank() * chunk_size + 1
+     end <- length(values)
+   }
+
+   lines <- sapply(values[start:end], fn)
+
+   comm.print(paste(lines, sep = "\n"), all.rank = TRUE)
+
+   finalize()
+
+In this example, each MPI process divides the values array into a number of chunks equal to the total number of MPI processes (``comm.size()``), then selects a chunk based on its rank (``comm.rank()``).
+Each process calls the function on its chunk locally using the base ``lapply()`` function and then the result from each process is globally printed (``comm.print()``).
+This is in contrast to the :ref:`parallel-R-parallel-snow` "Hello world" example, where a call to ``parallel::parSapply()`` on the manager process chunks the data, distributes function calls to worker processes, and returns the result to the manager process.
+
+The (PBS-style) job submission script for a R script using ``pbdMPI`` is simpler than the example for :ref:`parallel-R-parallel-snow`, as R does not need to be invoked using ``RMPISNOW``:
+
+.. code-block:: R
+
+   # TODO ... job submission example for pbdMPI ...
 
 .. note::
    ``pbdMPI`` is well-documented!
