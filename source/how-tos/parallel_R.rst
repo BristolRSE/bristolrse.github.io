@@ -8,6 +8,9 @@ Parallel R on HPC clusters
 
    How to write parallel `R <https://www.r-project.org/>`_ for high-performance computing (HPC) clusters 
 
+.. contents:: Contents
+   :local:
+
 Introduction
 ============
 
@@ -19,7 +22,7 @@ This how-to article is concerned with **running R in parallel on high-performanc
 In particular, the how-to focuses on a small number of methods for running parallel R that have been tested on the `University of Bristol ACRC's HPC facilities <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_.  
 
 
-``parallel`` + ``snow``
+parallel + snow
 =======================
 ``parallel`` is part of base R and supports multiprocess parallelism out-of-the-box.
 ``parallel`` does not come with MPI support, but supports this using the ``snow`` package, which is available via `CRAN <https://cran.r-project.org/package=snow>`_, e.g.
