@@ -16,7 +16,7 @@ Introduction
 
 There are many strategies for writing `R <https://www.r-project.org/>`_ programs that make use of parallelism.
 The ``parallel`` package is part of base R (since R 2.14.0), enabling out-of-the-box multi-process parallelism (for single and multiple hosts). If you want to run R using of multiple cores on a single computer, or a small number of networked computers, this is a good place to start.
-The CRAN Task View `High-Performance and Parallel Computing with R <https://cran.r-project.org/web/views/HighPerformanceComputing.html>`_ lists many packages relevant to R in parallel using HPC resources. 
+The CRAN Task View `High-Performance and Parallel Computing with R <https://cran.r-project.org/web/views/HighPerformanceComputing.html>`_ lists many packages relevant to employing parallelism in R. 
 
 This how-to article is concerned with **running R in parallel on high-performance computing (HPC) clusters**, in which a `job scheduler <https://en.wikipedia.org/wiki/Job_scheduler>`_ distributes user-submitted jobs to compute nodes and `MPI <https://en.wikipedia.org/wiki/Message_Passing_Interface>`_ is used for communication in multi-node parallel jobs.
 In particular, the how-to focuses on a small number of methods for running parallel R that have been tested on the `University of Bristol ACRC's HPC facilities <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_.  
@@ -35,10 +35,10 @@ parallel + snow
 .. note::
 
    The functionality of ``parallel`` and ``snow`` overlap significantly because ``parallel`` includes revised parts of ``snow``. 
-   The packages share a number of function names, so we must be explicit about which package we are using when both are loaded using ``::``, e.g. ``parallel::parSapply()``.
+   The packages share a number of function names, so it is useful to be explicit about which package we are using when both are loaded using ``::``, e.g. ``parallel::parSapply()``.
    
    In this example we use ``snow`` only where necessary for MPI parallelism, and use ``parallel`` otherwise.
-   This allows the example code to be repurposed for non-MPI parallelism using ``parallel`` alone.  
+   This allows the example code to be easily repurposed for non-MPI parallelism using ``parallel`` alone.  
 
 The ``parallel`` package employs a manager/worker approach to parallelism, in which a manager R process orchestrates a number of worker R processes.
 It provides a number of functions that, when called on the manager process, distribute computational work to worker processes.
@@ -56,20 +56,22 @@ which creates 4 worker MPI processes (in addition to the running manager process
 Behind-the-scenes, ``parallel`` uses ``snow`` to create the MPI cluster.
 
 During testing on ACRC's HPC facilities, spawning MPI processes using ``makeCluster`` was found to cause problems, particularly when submitting jobs to run across multiple compute nodes.
-The recommended approach for creating an MPI cluster using ``parallel`` + ``snow`` on ACRC HPC facilities is to create the cluster prior to starting R using ``mpirun`` to run the ``RMPISNOW`` script distributed with the ``snow`` package (see `"MPI Clusters without Spawning" <http://www.stat.uiowa.edu/~luke/R/cluster/cluster.html>`_), e.g. in the job submission script
+The recommended approach for creating an MPI cluster using ``parallel`` + ``snow`` on ACRC HPC facilities is to create the cluster prior to starting R using ``mpirun`` to run the ``RMPISNOW`` script distributed with the ``snow`` package (see `"MPI Clusters without Spawning" <http://www.stat.uiowa.edu/~luke/R/cluster/cluster.html>`_), e.g. in the job submission script use
 
 .. code-block:: shell
 
    mpirun -np 5 RMPISNOW [...]
 
-which will create a manager MPI process and 4 worker MPI processes represented by a cluster object.The arguments following ``RMPISNOW`` (``[...]``) will be passed to the manager R process.
+which will create a manager MPI process and 4 worker MPI processes represented by a cluster object.
+The arguments following ``RMPISNOW``, ``[...]``, will be passed to the manager R process.
 
 .. note:: 
 
    ``RMPISNOW`` is a shell script distributed with the ``snow`` R package.
    It is used to start a cluster of MPI processes (manager + workers) prior to running R code  using MPI parallelism via ``snow``.
 
-   If ``RMPISNOW`` is not available on the system ``PATH``, it can be located in the R library tree in which ``snow`` is installed at the path ``<R library tree>/snow/RMPISNOW`` (your ``<R library tree>`` can be found by running ``.libPaths()`` in a R session). 
+   If ``RMPISNOW`` is not available on the system ``PATH``, it can be located in the R library tree in which ``snow`` is installed at the path ``<R library tree>/snow/RMPISNOW``. 
+   Your ``<R library tree>`` can be found by running ``.libPaths()`` in an R session. 
 
    ``RMPISNOW`` invokes R with the ``R`` command, rather than ``Rscript``.
    Command line arguments to ``RMPISNOW`` are forwarded to ``R``. 
@@ -87,7 +89,9 @@ To obtain the MPI cluster object created by ``RMPISNOW``, use ``snow::getMPIclus
 
    cl <- snow::getMPIcluster()
 
-Once the cluster object has been created, this can be passed to the various functions provided by the ``parallel`` package for running parallel computations.
+Once the cluster object has been created (using ``parallel::makeCluster()`` or ``RMPISNOW`` with ``snow::getMPIcluster()``) this can be passed to the various functions provided by the ``parallel`` package for running parallel computations.
+See the vignette for ``parallel`` (``vignette("parallel")``) for details of the available functions.
+
 When the cluster is no longer required (usually at the end of the script), ``parallel::stopCluster`` should be used to shut down the cluster and ensure that worker processes are stopped, e.g.
 
 .. code-block:: R
@@ -123,11 +127,14 @@ Here is a short example R script that maps a "Hello world" function to an array 
    parallel::stopCluster(cl)  
 
 .. note:: 
-   This example imports the ``Rmpi`` package, though it is not necessary in general to use ``parallel`` + ``snow`` for MPI parallelism.
-   ``Rmpi`` provides low-level MPI wrapper functions used by ``snow`` and in this case, it is only used to obtain the rank of the MPI process running the "Hello world" function using ``mpi.comm.rank``.
-   The ``parallel::clusterExport`` function is used to broadcast variable values from the manager process to the worker processes, in this case exporting the handle for the default MPI communicator, ``MPI_COMM_WORLD``.
+   This example imports the ``Rmpi`` package, though it is not generally necessary to import this when using ``parallel`` + ``snow`` for MPI parallelism.
+   ``Rmpi`` provides low-level MPI wrapper functions used by ``snow``. 
+   In this case, it is only used to obtain the rank of the MPI process running the "Hello world" function using ``mpi.comm.rank``.
 
-Here is an example of a submission script that could be used to submit the abobve to a PBS-type scheduler (e.g. `OpenPBS <https://www.openpbs.org/>`_, `TORQUE <https://adaptivecomputing.com/cherry-services/torque-resource-manager/>`_) with non-process-spawning MPI:
+   The ``parallel::clusterExport`` function is used to broadcast variable values from the manager process to the worker processes. 
+   In this case, the function exports the handle for the default MPI communicator, ``MPI_COMM_WORLD``.
+
+Here is an example of a submission script that could be used to submit the above R program to a PBS-type scheduler (e.g. `OpenPBS <https://www.openpbs.org/>`_, `TORQUE <https://adaptivecomputing.com/cherry-services/torque-resource-manager/>`_) with non-process-spawning MPI:
 
 .. code-block:: shell
 
