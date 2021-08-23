@@ -21,6 +21,12 @@ The CRAN Task View `High-Performance and Parallel Computing with R <https://cran
 This how-to article is concerned with **running R in parallel on high-performance computing (HPC) clusters**, in which a `job scheduler <https://en.wikipedia.org/wiki/Job_scheduler>`_ distributes user-submitted jobs to compute nodes and `MPI <https://en.wikipedia.org/wiki/Message_Passing_Interface>`_ is used for communication in multi-node parallel jobs.
 In particular, the how-to focuses on a small number of methods for running parallel R that have been tested on the `University of Bristol ACRC's HPC facilities <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_.  
 
+.. note::
+   The example PBS-type job submission scripts in this how-to use environment modules (e.g. ``lib/openmpi/4.0.2-gcc`` and ``lang/r/4.0.2-gcc``) and set paths (e.g. ``R_LIBRARY_PATH``) specific to the `Blue Pebble cluster <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_ at University of Bristol.
+   These will need to be modified for other clusters.
+   Similarly, the scripts will need modification for use on clusters using non-PBS-type schedulers, such as `SLURM <https://slurm.schedmd.com/documentation.html>`_.
+
+
 .. _parallel-R-parallel-snow:
 
 parallel + snow
@@ -159,11 +165,6 @@ The script requests a walltime of 1 minute and 2 resource "chunks" with 4 cores,
 The R script ``hello_mpi.R`` is run in batch mode with 1 manager process and 7 worker processes (8 total MPI processes) created by ``RMPISNOW``. 
 The result is output in ``hello_mpi.Rout``.
 
-.. note::
-   The environment modules (``lib/openmpi/4.0.2-gcc`` and ``lang/r/4.0.2-gcc``) and ``R_LIBRARY_PATH`` value are specific to the `Blue Pebble cluster <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_ at University of Bristol.
-   These will need to be modified for other clusters.
-   Similarly, the script will need modification to use on clusters using non-PBS-type schedulers, such as `SLURM <https://slurm.schedmd.com/documentation.html>`_.
-
    
 pbdMPI
 ======
@@ -178,28 +179,29 @@ The package is available via `CRAN <https://cran.r-project.org/package=pbdMPI>`_
 If you have written code using MPI in other languages (e.g. Fortran, C), then ``pbdMPI``'s API should be familiar to you.
 
 Unlike :ref:`parallel-R-parallel-snow`, ``pbdMPI`` has no concept of manager and worker MPI processes.
-Instead, ``pbdMPI`` uses a Single Program Multiple Data (SPMD) model, in which each MPI process runs an identical program, but works with different data (i.e. all processes are workers).
-This is a common approach in parallel HPC software, and enables the development of software in which parallel processes co-operatively exchange data as needed.
+Instead, ``pbdMPI`` uses a Single Program Multiple Data (SPMD) model, in which each MPI process runs an identical program, but works with different data (i.e. all processes are equal workers).
+This is a common approach in parallel HPC software, and enables the development of sophisticated software in which parallel processes co-operatively exchange data as needed.
 
 .. note::
    ``pbdMPI`` is designed for use in non-interactive (batch) mode, and should not be used within an interactive R session.
-   Instead, run a R script using ``mpirun``, e.g.
+   Instead, run an R script using ``mpirun``, e.g.
 
    .. code-block:: shell
 
       mpirun -np 8 Rscript input.R > output.Rout
 
    Since all MPI processes are workers, R scripts using ``pbdMPI`` do not need to be started using a script like ``RMPISNOW`` (see :ref:`parallel-R-parallel-snow`) and can be run directly using ``mpirun``.
-   However, in testing it was found that using ``R CMD BATCH`` caused problems with text output, so it is 
-   recommended to use ``Rscript`` to invoke R.
+   
+   In testing it was found that using ``R CMD BATCH`` caused problems with output to files, so it is 
+   recommended to use ``Rscript`` to invoke R and redirect the output to a file (as above).
 
 R scripts using ``pbdMPI`` must start by initialising MPI using ``pbdMPI::init()`` and end by finalising MPI using ``pbdMPI::finalize()``.
 Between these two function calls, worker processes can perform computations, communicate data, and perform collective MPI operations (e.g. reduction).
 Each MPI process has a integer "rank" which can be obtained by calling ``comm.rank()``.
-The rank of the process is typically used to control the behaviour of the process, for example by selecting a rank of input data to work on. 
+The rank of the process is typically used to control the behaviour of the process, for example by selecting a chunk of input data to work on. 
 
 Here is a short example R script that maps calls of a "Hello world" function (similar to the function used in :ref:`parallel-R-parallel-snow`) to data from an array of integers.
-On each MPI process, the function is called on a chunk of data selected based on the process's rank.   
+For each MPI process, the function is called on a chunk of data selected based on the process's rank.   
 
 .. code-block:: R
 
@@ -214,7 +216,7 @@ On each MPI process, the function is called on a chunk of data selected based on
 
    init()
 
-   values <- seq(0, 100)
+   values <- seq(1, 100)
 
    # Break data into chunks based on MPI rank 
    # (highest numbered rank gets any remainder)
@@ -233,15 +235,31 @@ On each MPI process, the function is called on a chunk of data selected based on
 
    finalize()
 
-In this example, each MPI process divides the values array into a number of chunks equal to the total number of MPI processes (``comm.size()``), then selects a chunk based on its rank (``comm.rank()``).
+In this example, each MPI process divides the ``values`` array into a number of chunks equal to the total number of MPI processes (``comm.size()``), then selects a chunk based on its rank (``comm.rank()``).
 Each process calls the function on its chunk locally using the base ``lapply()`` function and then the result from each process is globally printed (``comm.print()``).
 This is in contrast to the :ref:`parallel-R-parallel-snow` "Hello world" example, where a call to ``parallel::parSapply()`` on the manager process chunks the data, distributes function calls to worker processes, and returns the result to the manager process.
 
 The (PBS-style) job submission script for a R script using ``pbdMPI`` is simpler than the example for :ref:`parallel-R-parallel-snow`, as R does not need to be invoked using ``RMPISNOW``:
 
-.. code-block:: R
+.. code-block:: shell
 
-   # TODO ... job submission example for pbdMPI ...
+   #!/bin/bash
+
+   #PBS -N hello_mpi
+   #PBS -l select=2:ncpus=8:mpiprocs=8:ompthreads=1:mem=500M
+   #PBS -l walltime=00:01:00
+
+   module load lib/openmpi/4.0.2-gcc
+   module load lang/r/4.0.2-gcc
+
+   R_SCRIPT_PATH="${PBS_O_WORKDIR}/hello_mpi.R"
+   R_OUTPUT_PATH="${PBS_O_WORKDIR}/hello_mpi.Rout"
+
+   mpirun -np 16 Rscript ${R_SCRIPT_PATH} > ${R_OUTPUT_PATH}
+
+The script requests a walltime of 1 minute and 2 resource "chunks" with 8 cores, 8 MPI processes and 500 MB memory each.
+The R script ``hello_mpi.R`` is run using ``Rscript`` with 16 MPI processes and (standard) output is redirected to the file ``hello_mpi.Rout`` (OpenMPI's ``mpirun`` `collects the standard output from all MPI processes <https://www.open-mpi.org/doc/current/man1/mpirun.1.php#sect17>`_ and this is redirected to the output file).
+Each MPI process runs the same R code, but differs in the value returned by ``comm.rank()``.
 
 .. note::
    ``pbdMPI`` is well-documented!
