@@ -271,6 +271,68 @@ Each MPI process runs the same R code, but differs in the value returned by ``co
 foreach + doMPI
 ===============
 
+The ``foreach`` package adds a `foreach loop <https://en.wikipedia.org/wiki/Foreach_loop>`_ construct to R.
+This allows iterating over elements in a colection without using an explicit counter variable.
+A ``foreach`` construct can be executed in parallel and is designed to be generic with respect to the form of parallelism, allowing the same R code to be run on a variety of computational backends.
+
+The ``doMPI`` package provides a parallel backend for ``foreach``, allowing ``foreach`` loops to be parallelised using MPI.
+As in ``snow`` (see :ref:`parallel-R-parallel-snow`), ``doMPI`` uses ``Rmpi`` for access to low-level MPI functions.
+
+Both `foreach <https://cran.r-project.org/package=foreach>`_ and `doMPI <https://cran.r-project.org/package=doMPI>`_ are available via CRAN, e.g. 
+
+.. code-block:: R
+
+   install.packages(c("foreach", "doMPI"))
+
+.. code-block:: R
+
+   library(Rmpi)
+   library(foreach)
+   library(doMPI)
+
+   cl <- startMPIcluster()
+
+   MPI_COMM_WORLD <- cl$comm
+   print(sprintf("Hello world, this is your manager speaking from rank %d",
+         mpi.comm.rank(MPI_COMM_WORLD)))
+
+   registerDoMPI(cl)
+
+   fn <- function(n, comm = MPI_COMM_WORLD) {
+     info <- Sys.info()
+     rank <- mpi.comm.rank(comm)
+     return(sprintf("Hello world! Node %s (rank %s) received value %d",
+            info["nodename"], rank,  n))
+   }
+
+   values <- seq(1, 100)
+
+   results <- foreach(i = values) %dopar% {
+      fn(i)
+   }
+
+   for (s in results) {
+     print(s)
+   }
+
+   closeCluster(cl)
+   mpi.quit()
+
+.. code-block:: shell
+
+   #!/bin/bash
+
+   #PBS -N hello_mpi
+   #PBS -l select=4:ncpus=2:mpiprocs=2:ompthreads=1:mem=500M
+   #PBS -l walltime=00:01:00
+
+   module load lib/openmpi/4.0.2-gcc
+   module load lang/r/4.0.2-gcc
+
+   R_SCRIPT_PATH="${PBS_O_WORKDIR}/hello_mpi.R"
+   R_OUTPUT_PATH="${PBS_O_WORKDIR}/hello_mpi.Rout"
+
+   mpirun -np 8 Rscript ${R_SCRIPT_PATH} > ${R_OUTPUT_PATH}
 
 future + snow
 =============
