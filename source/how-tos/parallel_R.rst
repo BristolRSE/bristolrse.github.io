@@ -272,10 +272,10 @@ foreach + doMPI
 ===============
 
 The ``foreach`` package adds a `foreach loop <https://en.wikipedia.org/wiki/Foreach_loop>`_ construct to R.
-This allows iterating over elements in a colection without using an explicit counter variable.
-A ``foreach`` construct can be executed in parallel and is designed to be generic with respect to the form of parallelism, allowing the same R code to be run on a variety of computational backends.
+This allows iterating over elements in a collection without using an explicit counter variable.
+The iterations of a ``foreach`` loop can be executed in parallel and the construct is designed to be generic with respect to the form of parallelism, allowing the same R code to be run using a variety of computational backends.
 
-The ``doMPI`` package provides a parallel backend for ``foreach``, allowing ``foreach`` loops to be parallelised using MPI.
+The ``doMPI`` package provides a parallel backend for ``foreach``, allowing ``foreach`` loops to be parallelised using MPI .
 As in ``snow`` (see :ref:`parallel-R-parallel-snow`), ``doMPI`` uses ``Rmpi`` for access to low-level MPI functions.
 
 Both `foreach <https://cran.r-project.org/package=foreach>`_ and `doMPI <https://cran.r-project.org/package=doMPI>`_ are available via CRAN, e.g. 
@@ -283,6 +283,14 @@ Both `foreach <https://cran.r-project.org/package=foreach>`_ and `doMPI <https:/
 .. code-block:: R
 
    install.packages(c("foreach", "doMPI"))
+
+.. note::
+
+   Other parallel backends for ``foreach`` are available, allowing ``foreach`` loop constructs to be parallelised using different methods. 
+   For example, the ``doParallel`` package (available on `CRAN <https://cran.r-project.org/package=doParallel>`_) provides an interface between ``foreach`` and the the core R ``parallel`` package, allowing ``foreach`` loops to make use of multiprocess parallelism.
+   
+   While it may be possible to use a ``snow``-type MPI cluster with ``doParallel`` for MPI-parallelism with ``foreach``, this how-to focuses on ``doMPI``.
+   The ``doMPI`` package is well-documented (see the `vignette <https://cran.r-project.org/web/packages/doMPI/vignettes/doMPI.pdf>`_) and, unlike :ref:`parallel-R-parallel-snow`, does not require R to be started using a wrapper script when using non-process-spawning MPI.
 
 .. code-block:: R
 
