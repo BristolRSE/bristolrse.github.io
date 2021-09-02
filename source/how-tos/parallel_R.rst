@@ -6,7 +6,7 @@ Parallel R on HPC clusters
 
 .. admonition:: What is this page about?
 
-   How to write parallel `R <https://www.r-project.org/>`_ for high-performance computing (HPC) clusters 
+   How to write parallel `R <https://www.r-project.org/>`__ for high-performance computing (HPC) clusters 
 
 .. contents:: Contents
    :local:
@@ -14,17 +14,17 @@ Parallel R on HPC clusters
 Introduction
 ============
 
-There are many strategies for writing `R <https://www.r-project.org/>`_ programs that make use of parallelism.
+There are many strategies for writing `R <https://www.r-project.org/>`__ programs that make use of parallelism.
 The ``parallel`` package is part of base R (since R 2.14.0), enabling out-of-the-box multi-process parallelism (for single and multiple hosts). If you want to run R using of multiple cores on a single computer, or a small number of networked computers, this is a good place to start.
-The CRAN Task View `High-Performance and Parallel Computing with R <https://cran.r-project.org/web/views/HighPerformanceComputing.html>`_ lists many packages relevant to employing parallelism in R. 
+The CRAN Task View `High-Performance and Parallel Computing with R <https://cran.r-project.org/web/views/HighPerformanceComputing.html>`__ lists many packages relevant to employing parallelism in R. 
 
-This how-to article is concerned with **running R in parallel on high-performance computing (HPC) clusters**, in which a `job scheduler <https://en.wikipedia.org/wiki/Job_scheduler>`_ distributes user-submitted jobs to compute nodes and `MPI <https://en.wikipedia.org/wiki/Message_Passing_Interface>`_ is used for communication in multi-node parallel jobs.
-In particular, the how-to focuses on a small number of methods for running parallel R that have been tested on the `University of Bristol ACRC's HPC facilities <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_.  
+This how-to article is concerned with **running R in parallel on high-performance computing (HPC) clusters**, in which a `job scheduler <https://en.wikipedia.org/wiki/Job_scheduler>`__ distributes user-submitted jobs to compute nodes and `MPI <https://en.wikipedia.org/wiki/Message_Passing_Interface>`__ is used for communication in multi-node parallel jobs.
+In particular, the how-to focuses on a small number of methods for running parallel R that have been tested on the `University of Bristol ACRC's HPC facilities <https://www.bristol.ac.uk/acrc/high-performance-computing/>`__.  
 
 .. note::
-   The example PBS-type job submission scripts in this how-to use environment modules (e.g. ``lib/openmpi/4.0.2-gcc`` and ``lang/r/4.0.2-gcc``) and set paths (e.g. ``R_LIBRARY_PATH``) specific to the `Blue Pebble cluster <https://www.bristol.ac.uk/acrc/high-performance-computing/>`_ at University of Bristol.
+   The example PBS-type job submission scripts in this how-to use environment modules (e.g. ``lib/openmpi/4.0.2-gcc`` and ``lang/r/4.0.2-gcc``) and set paths (e.g. ``R_LIBRARY_PATH``) specific to the `Blue Pebble cluster <https://www.bristol.ac.uk/acrc/high-performance-computing/>`__ at University of Bristol.
    These will need to be modified for other clusters.
-   Similarly, the scripts will need modification for use on clusters using non-PBS-type schedulers, such as `SLURM <https://slurm.schedmd.com/documentation.html>`_.
+   Similarly, the scripts will need modification for use on clusters using non-PBS-type schedulers, such as `SLURM <https://slurm.schedmd.com/documentation.html>`__.
 
 
 .. _parallel-R-parallel-snow:
@@ -32,7 +32,7 @@ In particular, the how-to focuses on a small number of methods for running paral
 parallel + snow
 =======================
 ``parallel`` is part of base R and supports multiprocess parallelism out-of-the-box.
-``parallel`` does not come with MPI support, but supports this using the ``snow`` package, which is available via `CRAN <https://cran.r-project.org/package=snow>`_, e.g.
+``parallel`` does not come with MPI support, but supports this using the ``snow`` package, which is available via `CRAN <https://cran.r-project.org/package=snow>`__, e.g.
 
 .. code-block:: R
 
@@ -62,7 +62,7 @@ which creates 4 worker MPI processes (in addition to the running manager process
 Behind-the-scenes, ``parallel`` uses ``snow`` to create the MPI cluster.
 
 During testing on ACRC's HPC facilities, spawning MPI processes using ``makeCluster`` was found to cause problems, particularly when submitting jobs to run across multiple compute nodes.
-The recommended approach for creating an MPI cluster using ``parallel`` + ``snow`` on ACRC HPC facilities is to create the cluster prior to starting R using ``mpirun`` to run the ``RMPISNOW`` script distributed with the ``snow`` package (see `"MPI Clusters without Spawning" <http://www.stat.uiowa.edu/~luke/R/cluster/cluster.html>`_), e.g. in the job submission script use
+The recommended approach for creating an MPI cluster using ``parallel`` + ``snow`` on ACRC HPC facilities is to create the cluster prior to starting R using ``mpirun`` to run the ``RMPISNOW`` script distributed with the ``snow`` package (see `"MPI Clusters without Spawning" <http://www.stat.uiowa.edu/~luke/R/cluster/cluster.html>`__), e.g. in the job submission script use
 
 .. code-block:: shell
 
@@ -140,7 +140,7 @@ Here is a short example R script that maps a "Hello world" function to an array 
    The ``parallel::clusterExport`` function is used to broadcast variable values from the manager process to the worker processes. 
    In this case, the function exports the handle for the default MPI communicator, ``MPI_COMM_WORLD``.
 
-Here is an example of a submission script that could be used to submit the above R program to a PBS-type scheduler (e.g. `OpenPBS <https://www.openpbs.org/>`_, `TORQUE <https://adaptivecomputing.com/cherry-services/torque-resource-manager/>`_) with non-process-spawning MPI:
+Here is an example of a submission script that could be used to submit the above R program to a PBS-type scheduler (e.g. `OpenPBS <https://www.openpbs.org/>`__, `TORQUE <https://adaptivecomputing.com/cherry-services/torque-resource-manager/>`__) with non-process-spawning MPI:
 
 .. code-block:: shell
 
@@ -168,8 +168,8 @@ The result is output in ``hello_mpi.Rout``.
    
 pbdMPI
 ======
-The ``pbdMPI`` package is part of the `Programming with Big Data in R (pdbR) project <https://pbdr.org/>`_, a set of R packages designed for use in distributed computing and data science.
-The package is available via `CRAN <https://cran.r-project.org/package=pbdMPI>`_, e.g.
+The ``pbdMPI`` package is part of the `Programming with Big Data in R (pdbR) project <https://pbdr.org/>`__, a set of R packages designed for use in distributed computing and data science.
+The package is available via `CRAN <https://cran.r-project.org/package=pbdMPI>`__, e.g.
 
 .. code-block:: R
 
@@ -258,27 +258,27 @@ The (PBS-style) job submission script for a R script using ``pbdMPI`` is simpler
    mpirun -np 16 Rscript ${R_SCRIPT_PATH} > ${R_OUTPUT_PATH}
 
 The script requests a walltime of 1 minute and 2 resource "chunks" with 8 cores, 8 MPI processes and 500 MB memory each.
-The R script ``hello_mpi.R`` is run using ``Rscript`` with 16 MPI processes and (standard) output is redirected to the file ``hello_mpi.Rout`` (OpenMPI's ``mpirun`` `collects the standard output from all MPI processes <https://www.open-mpi.org/doc/current/man1/mpirun.1.php#sect17>`_ and this is redirected to the output file).
+The R script ``hello_mpi.R`` is run using ``Rscript`` with 16 MPI processes and (standard) output is redirected to the file ``hello_mpi.Rout`` (OpenMPI's ``mpirun`` `collects the standard output from all MPI processes <https://www.open-mpi.org/doc/current/man1/mpirun.1.php#sect17>`__ and this is redirected to the output file).
 Each MPI process runs the same R code, but differs in the value returned by ``comm.rank()``.
 
 .. note::
    ``pbdMPI`` is well-documented!
-   If you are interested learning more about using the package, see the detailed `vignette <https://cran.r-project.org/web/packages/pbdMPI/vignettes/pbdMPI-guide.pdf>`_ (``vignette("pbdMPI-guide")``).
+   If you are interested learning more about using the package, see the detailed `vignette <https://cran.r-project.org/web/packages/pbdMPI/vignettes/pbdMPI-guide.pdf>`__ (``vignette("pbdMPI-guide")``).
    This includes examples which compare scripts using ``parallel`` + ``snow`` to equivalent scripts using ``pbdMPI``.
-   The package is also distributed with a number of demos (described in the vignette) and the source code for the demos can be viewed on `GitHub <https://github.com/RBigData/pbdMPI/tree/master/demo>`_.
+   The package is also distributed with a number of demos (described in the vignette) and the source code for the demos can be viewed on `GitHub <https://github.com/RBigData/pbdMPI/tree/master/demo>`__.
 
 
 foreach + doMPI
 ===============
 
-The ``foreach`` package adds a `foreach loop <https://en.wikipedia.org/wiki/Foreach_loop>`_ construct to R.
+The ``foreach`` package adds a `foreach loop <https://en.wikipedia.org/wiki/Foreach_loop>`__ construct to R.
 This allows iterating over elements in a collection without using an explicit counter variable.
 The iterations of a ``foreach`` loop can be executed in parallel and the construct is designed to be generic with respect to the form of parallelism, allowing the same R code to be run using a variety of computational backends.
 
 The ``doMPI`` package provides a parallel backend for ``foreach``, allowing ``foreach`` loops to be parallelised using MPI .
 As in ``snow`` (see :ref:`parallel-R-parallel-snow`), ``doMPI`` uses ``Rmpi`` for access to low-level MPI functions.
 
-Both `foreach <https://cran.r-project.org/package=foreach>`_ and `doMPI <https://cran.r-project.org/package=doMPI>`_ are available via CRAN, e.g. 
+Both `foreach <https://cran.r-project.org/package=foreach>`__ and `doMPI <https://cran.r-project.org/package=doMPI>`__ are available via CRAN, e.g. 
 
 .. code-block:: R
 
@@ -287,10 +287,10 @@ Both `foreach <https://cran.r-project.org/package=foreach>`_ and `doMPI <https:/
 .. note::
 
    Other parallel backends for ``foreach`` are available, allowing ``foreach`` loop constructs to be parallelised using different methods. 
-   For example, the ``doParallel`` package (available on `CRAN <https://cran.r-project.org/package=doParallel>`_) provides an interface between ``foreach`` and the the core R ``parallel`` package, allowing ``foreach`` loops to make use of multiprocess parallelism.
+   For example, the ``doParallel`` package (available on `CRAN <https://cran.r-project.org/package=doParallel>`__) provides an interface between ``foreach`` and the the core R ``parallel`` package, allowing ``foreach`` loops to make use of multiprocess parallelism.
    
    While it may be possible to use a ``snow``-type MPI cluster with ``doParallel`` for MPI-parallelism with ``foreach``, this how-to focuses on ``doMPI``.
-   The ``doMPI`` package is well-documented (see the `vignette <https://cran.r-project.org/web/packages/doMPI/vignettes/doMPI.pdf>`_) and, unlike :ref:`parallel-R-parallel-snow`, does not require R to be started using a wrapper script when using non-process-spawning MPI.
+   The ``doMPI`` package is well-documented (see the `vignette <https://cran.r-project.org/web/packages/doMPI/vignettes/doMPI.pdf>`__) and, unlike :ref:`parallel-R-parallel-snow`, does not require R to be started using a wrapper script when using non-process-spawning MPI.
 
 .. code-block:: R
 
