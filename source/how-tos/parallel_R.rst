@@ -292,6 +292,28 @@ Both `foreach <https://cran.r-project.org/package=foreach>`__ and `doMPI <https:
    While it may be possible to use a ``snow``-type MPI cluster with ``doParallel`` for MPI-parallelism with ``foreach``, this how-to focuses on ``doMPI``.
    The ``doMPI`` package is well-documented (see the `vignette <https://cran.r-project.org/web/packages/doMPI/vignettes/doMPI.pdf>`__) and, unlike :ref:`parallel-R-parallel-snow`, does not require R to be started using a wrapper script when using non-process-spawning MPI.
 
+Similar to :ref:`parallel-R-parallel-snow`, ``foreach`` with ``doMPI`` uses a manager/worker approach to parallelism.
+The manager process runs your R code and sends work to worker processes via parallel ``foreach`` loops.
+
+Although ``doMPI`` can be used with process spawning MPI, it is recommended to use a non-process-spawning approach when running jobs on a HPC cluster using a job scheduler (`vignette("doMPI")` <https://cran.r-project.org/web/packages/doMPI/vignettes/doMPI.pdf>`_).
+To do this, start R with ``mpirun``, e.g.
+
+.. code-block:: shell
+
+   mpirun -np 5 Rscript script.R > script.Rout
+
+which will create 5 MPI processes, 1 manager and 4 workers, and run ``script.R``, sending output to ``script.Rout``.
+It is important to note that invoking R in this way causes **all MPI processes to start by executing the same code** in the script.
+The MPI processes are partitioned into manager and worker roles by calling ``startMPIcluster()`` in the script, which returns a cluster object.
+
+.. code-block:: R
+
+   cl <- startMPIcluster()
+
+Worker processes stop executing the script at this point and will instead execute a worker loop, waiting for instructions from the manager process.
+Only the manager process will continue executing the remainder of the script.
+To avoid workers running code intended to be only run by the master, it ``startMPIcluster()`` should be called at the start of the script.
+
 .. code-block:: R
 
    library(Rmpi)
