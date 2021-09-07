@@ -322,7 +322,11 @@ Once an MPI cluster object has been created using ``startMPIcluster()``, ``doMPI
 
 From this point, ``foreach`` constructs using the ``%dopar%`` operator will be executed in parallel, using the MPI cluster passed to ``registerDoMPI()``. 
 
-**TODO** Closing down the cluster
+Once the MPI cluster has completed its work (typically at the end of a script), it should be shut down using ``closeCluster()`` to prevent stray processes remaining running after the script has existed, i.e.
+
+.. code-block:: R
+
+   closeCluster(cl)
 
 **TODO** Brief description of ``foreach`` construct, with pointer to documentation
 
