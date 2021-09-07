@@ -328,6 +328,10 @@ Once the MPI cluster has completed its work (typically at the end of a script), 
 
    closeCluster(cl)
 
+.. note::
+   The MPI execution environment should also be terminated, using one of ``mpi.quit()``, ``mpi.exit()``, or ``mpi.finalize()``.
+   See the documentation (``help("mpi.quit")``) for details of the differences in how these functions behave.
+
 **TODO** Brief description of ``foreach`` construct, with pointer to documentation
 
 .. code-block:: R
