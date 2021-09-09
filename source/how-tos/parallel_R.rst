@@ -165,6 +165,7 @@ The script requests a walltime of 1 minute and 2 resource "chunks" with 4 cores,
 The R script ``hello_mpi.R`` is run in batch mode with 1 manager process and 7 worker processes (8 total MPI processes) created by ``RMPISNOW``. 
 The result is output in ``hello_mpi.Rout``.
 
+.. _pbdMPI:
    
 pbdMPI
 ======
@@ -304,6 +305,7 @@ To do this, start R with ``mpirun``, specifying the total number of MPI processe
 
 which will create 5 MPI processes (1 manager and 4 workers) and run ``script.R``, sending output to ``script.Rout``.
 It is important to note that invoking R in this way causes **all MPI processes to start by executing the same code** in the script.
+
 The MPI processes are partitioned into manager and worker roles by calling ``startMPIcluster()`` in the script, which returns a cluster object.
 
 .. code-block:: R
@@ -332,7 +334,23 @@ Once the MPI cluster has completed its work (typically at the end of a script), 
    The MPI execution environment should also be terminated, using one of ``mpi.quit()``, ``mpi.exit()``, or ``mpi.finalize()``.
    See the documentation (``help("mpi.quit")``) for details of the differences in how these functions behave.
 
-**TODO** Brief description of ``foreach`` construct, with pointer to documentation
+The ``foreach`` construct provides a powerful syntax for expressing parallel loops, where loop iterations are executed in parallel.
+This works well for operations that can be decomposed into multiple components that do not depend on the results of each other, e.g. operating on rows of a data frame.
+
+A simple parallel ``foreach`` construct has the form
+
+.. code-block:: R
+
+   results <- foreach(i = 1:N) %dopar% {
+      expression
+   }
+
+where ``expression`` is an R expression (or sequence of expressions). This will execute ``expression`` ``N``-times, each with a different value of ``i`` between 1 and ``N``.
+Using the ``%dopar%`` operator causes the registered parallel backend to be used.
+The result of ``expression`` for each repetition is returned by ``foreach`` as a list (on the manager MPI process, when ``doMPI`` is the registered backend).
+See the `vignette <https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html>`__ for ``foreach`` for further details on using the construct.
+
+Here is a short example R script that calls a "Hello world" function for a sequence of integer values using a parallel ``foreach`` construct.
 
 .. code-block:: R
 
@@ -368,6 +386,10 @@ Once the MPI cluster has completed its work (typically at the end of a script), 
    closeCluster(cl)
    mpi.quit()
 
+In this example, ``fn()`` is called with different values of ``i`` on worker MPI processes in the cluster ``cl`` and the results from each function call are returned and output on the manager process.
+
+The (PBS-style) job submission script for a R script using ``foreach`` and ``doMPI`` is simpler than the example for :ref:`parallel-R-parallel-snow` , as R does not need to be invoked using ``RMPISNOW`` (it has the same form as the example submission script :ref:`pbdMPI`):
+
 .. code-block:: shell
 
    #!/bin/bash
@@ -383,6 +405,10 @@ Once the MPI cluster has completed its work (typically at the end of a script), 
    R_OUTPUT_PATH="${PBS_O_WORKDIR}/hello_mpi.Rout"
 
    mpirun -np 8 Rscript ${R_SCRIPT_PATH} > ${R_OUTPUT_PATH}
+
+The script requests a walltime of 1 minute and 4 resource "chunks" with 2 cores, 2 MPI processes and 500 MB memory each.
+The R script ``hello_mpi.R`` is run using ``Rscript`` with 8 MPI processes and (standard) output is redirected to the file ``hello_mpi.Rout``.
+The MPI processes all start running the same R script, but are partitioned into manager and worker roles when ``startMPIcluster()`` is called.
 
 future + snow
 =============
